@@ -1,20 +1,25 @@
 %{
 	open Printf	
+	open Jlite_structs
 %}
 
-%token WHITESPACE
 %token <string> KEYWORD
-%token <string> BOOLEAN INTEGER STRING
-%token IDENTIFIER CLASS_NAME
+%token <bool> BOOLEAN
+%token <int> INTEGER 
+%token <string> STRING
+%token <Jlite_structs.var_id> IDENTIFIER
+%token <Jlite_structs.class_name> CLASS_NAME
+%token <Jlite_structs.jlite_op> OP
+%token WHITESPACE NEWLINE
 %token OPEN_BRACE CLOSE_BRACE OPEN_PAREN CLOSE_PAREN
 %token COMMA SEMICOLON
 %token OPEN_MULTI_COMMENT CLOSE_MULTI_COMMENT SINGLE_COMMENT
-%token UNARY_OP BINARY_OP
 
 %start input
 %type <unit> input
 
 %%
 
-input: BOOLEAN { printf "bool %s\n" $1; flush stdout }
-;
+input: /* empty */ { }
+	|  BOOLEAN WHITESPACE { print_endline (string_of_bool $1) }
+	;
