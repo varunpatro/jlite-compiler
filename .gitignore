@@ -1,0 +1,28 @@
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa
+
+# ocamlbuild working directory
+_build/
+
+# ocamlbuild targets
+*.byte
+*.native
+
+# oasis generated files
+setup.data
+setup.log
+
+# binaries
+jlite_main
+
+# intermediate files
+jlite_lexer.ml
+jlite_parser.ml
+jlite_parser.mli
