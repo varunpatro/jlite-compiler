@@ -38,7 +38,7 @@ rule prog_lex = parse
   | boolean_op as b { OP(Jlite_structs.BooleanOp b) }
   | relational_op as r { OP(Jlite_structs.RelationalOp r) }
   | arithmetic_op as a { OP(Jlite_structs.ArithmeticOp (String.make 1 a)) }
-  | whitespace { WHITESPACE }
+  | whitespace { prog_lex lexbuf }
   | ';' { SEMICOLON }
   | '{' { OPEN_BRACE }
   | '}' { CLOSE_BRACE }
