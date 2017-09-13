@@ -11,7 +11,6 @@ let whitespace_char = ' ' | '\t'
 let newline = '\r' | '\n' | "\r\n"
 
 let whitespace = (whitespace_char | newline)+
-let keyword = "class" | "if" | "else" | "while" | "readln" | "println" | "return" | "new" | "this" | "null"
 let boolean = "true" | "false"
 let identifier = lowercase (lowercase | uppercase | underscore | digit)*
 let classname = uppercase (lowercase | uppercase | underscore | digit)*
@@ -28,7 +27,16 @@ let arithmetic_op = "+" | "-" | "*" | "/"
 
 
 rule prog_lex = parse
-  | keyword as kw { KEYWORD(kw) }
+  | "class" { CLASS }
+  | "if" { IF }
+  | "else" { ELSE }
+  | "while" { WHILE }
+  | "readln" { READLN }
+  | "println" { PRINTLN }
+  | "return" { RETURN }
+  | "new" { NEW }
+  | "this" { THIS }
+  | "null" { NULL }
   | boolean as b { BOOLEAN(bool_of_string b) }
   | integer as i { INTEGER(int_of_string i) }
   | string as str { STRING(str) }
