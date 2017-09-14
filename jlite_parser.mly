@@ -10,12 +10,12 @@
 %token <Jlite_structs.var_id> IDENTIFIER
 %token <Jlite_structs.class_name> CLASS_NAME
 %token <Jlite_structs.jlite_type> VOID INTEGER BOOLEAN STRING
-%token <Jlite_structs.jlite_op> OP
+%token <Jlite_structs.jlite_op> OR_BOOLEAN_OP AND_BOOLEAN_OP RELATIONAL_OP PLUS MINUS TIMES DIVIDE
 %token CLASS IF ELSE WHILE READLN PRINTLN RETURN NEW
 %token THIS NULL
+%token EQUAL EXCLAMATION PERIOD
 %token OPEN_BRACE CLOSE_BRACE OPEN_PAREN CLOSE_PAREN
 %token COMMA SEMICOLON
-%token OPEN_MULTI_COMMENT CLOSE_MULTI_COMMENT SINGLE_COMMENT
 %token EOF
 
 %start input
@@ -89,14 +89,108 @@ md_body:
 	| OPEN_BRACE var_decl_list stmt stmt_list CLOSE_BRACE { ($2, $3 :: $4) }
 	;
 
+stmt_list_min_one:
+	| stmt { [$1] }
+	| stmt_list_min_one stmt { $1 @ [$2] }
+	;
+
 stmt_list:
 	| /* empty */ { [] }
 	| stmt_list stmt { $1 @ [$2] }
 	;
 
 stmt:
+	| if_part else_part { Jlite_structs.IfStmt(fst $1, snd $1, $2) }
+	| WHILE OPEN_PAREN exp CLOSE_PAREN OPEN_BRACE stmt_list_min_one CLOSE_BRACE { Jlite_structs.WhileStmt($3, $6) }
+	| READLN OPEN_PAREN id CLOSE_PAREN SEMICOLON { Jlite_structs.ReadStmt $3 }
+	| PRINTLN OPEN_PAREN id CLOSE_PAREN SEMICOLON { Jlite_structs.PrintStmt (Jlite_structs.Var $3) }
+	| id EQUAL exp SEMICOLON { Jlite_structs.AssignStmt($1, $3) }
+	| atom PERIOD id EQUAL exp SEMICOLON { Jlite_structs.AssignFieldStmt(Jlite_structs.FieldAccess($1, $3), $5) }
+	| atom OPEN_PAREN exp_list CLOSE_PAREN SEMICOLON { Jlite_structs.MdCallStmt(Jlite_structs.MdCall($1, $3)) }
+	| RETURN exp SEMICOLON { Jlite_structs.ReturnStmt $2 }
 	| RETURN SEMICOLON { Jlite_structs.ReturnVoidStmt }
 	;
+
+if_part:
+	| IF OPEN_PAREN exp CLOSE_PAREN OPEN_BRACE stmt_list_min_one CLOSE_BRACE { ($3, $6) }
+	;
+
+else_part:
+	| ELSE OPEN_BRACE stmt_list_min_one CLOSE_BRACE { $3 }
+	;
+
+exp:
+	| bexp { $1 }
+	| aexp { $1 }
+	| sexp { $1 }
+	;
+
+bexp:
+	| bexp OR_BOOLEAN_OP conj { Jlite_structs.BinaryExp($2, $1, $3) }
+	| conj { $1 }
+	;
+
+conj:
+	| conj AND_BOOLEAN_OP rexp { Jlite_structs.BinaryExp($2, $1, $3) }
+	| rexp { $1 }
+	;
+
+rexp:
+	| aexp RELATIONAL_OP aexp { Jlite_structs.BinaryExp($2, $1, $3) }
+	| bgrd { $1 }
+	;
+
+bgrd:
+	| EXCLAMATION bgrd { $2 }
+	| BOOLEAN_LIT { Jlite_structs.BoolLiteral $1 }
+	| atom { $1 }
+	;
+
+aexp:
+	| aexp PLUS term { Jlite_structs.BinaryExp($2, $1, $3) }
+	| aexp MINUS term { Jlite_structs.BinaryExp($2, $1, $3) }
+	| term { $1 }
+	;
+
+sexp:
+	| STRING_LIT { Jlite_structs.StringLiteral $1 }
+	| atom { $1 }
+	;
+
+term:
+	| term TIMES factor { Jlite_structs.BinaryExp($2, $1, $3) }
+	| term DIVIDE factor { Jlite_structs.BinaryExp($2, $1, $3) }
+	| factor { $1 }
+	;
+
+factor:
+	| INTEGER_LIT { Jlite_structs.IntLiteral $1 }
+	| MINUS factor { Jlite_structs.UnaryExp ($1, $2) }
+	| atom { $1 }
+	;
+
+atom:
+	| atom PERIOD id { Jlite_structs.FieldAccess($1, $3) }
+	| atom OPEN_PAREN exp_list CLOSE_PAREN { Jlite_structs.MdCall($1, $3) }
+	| THIS { Jlite_structs.ThisWord }
+	| id { Jlite_structs.Var $1 }
+	| NEW CLASS_NAME OPEN_PAREN CLOSE_PAREN { Jlite_structs.ObjectCreate $2 }
+	| OPEN_PAREN exp CLOSE_PAREN { $2 }
+	| NULL { Jlite_structs.NullWord }
+	;
+
+exp_list:
+	| /* empty */ { [] }
+	| exp exp_rest_list { $1 :: $2 }
+	;
+
+exp_rest_list:
+	| /* empty */ { [] }
+	| exp_rest_list exp_rest { $1 @ [$2] }
+	;
+
+exp_rest:
+	| COMMA exp { $2 }
 
 var_decl_list:
 	| /* empty */ { [] }

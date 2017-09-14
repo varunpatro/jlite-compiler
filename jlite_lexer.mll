@@ -17,14 +17,7 @@ let classname = uppercase (lowercase | uppercase | underscore | digit)*
 let integer = digit+
 let string = "\"[^\"\\\\]*(\\\\.[^\"\\\\]*)*\""
 
-(* Operators *)
-let unary_op = '!' | '-'
-let assignment = '='
-let period = '.'
-let boolean_op = "||" | "&&"
 let relational_op = ">(=)?" | "<(=)?" | "(!|=)?="
-let arithmetic_op = "+" | "-" | "*" | "/"
-
 
 rule prog_lex = parse
   | "class" { CLASS }
@@ -50,19 +43,25 @@ rule prog_lex = parse
       | x -> IDENTIFIER(Jlite_structs.SimpleVarId x)
   }
   | classname as cname { CLASS_NAME(cname) }
-  | unary_op as u { OP(Jlite_structs.UnaryOp (String.make 1 u)) }
-  | boolean_op as b { OP(Jlite_structs.BooleanOp b) }
-  | relational_op as r { OP(Jlite_structs.RelationalOp r) }
-  | arithmetic_op as a { OP(Jlite_structs.ArithmeticOp (String.make 1 a)) }
-  | whitespace { prog_lex lexbuf }
+  | relational_op as r { RELATIONAL_OP(Jlite_structs.RelationalOp r) }
+  | "||" as b { OR_BOOLEAN_OP(Jlite_structs.BooleanOp b) }
+  | "&&" as b { AND_BOOLEAN_OP(Jlite_structs.BooleanOp b) }
+  | '+' as a { PLUS(Jlite_structs.ArithmeticOp (String.make 1 a)) }
+  | '-' as a { MINUS(Jlite_structs.ArithmeticOp (String.make 1 a)) }
+  | '*' as a { TIMES(Jlite_structs.ArithmeticOp (String.make 1 a)) }
+  | '/' as a { DIVIDE(Jlite_structs.ArithmeticOp (String.make 1 a)) }
+  | '=' { EQUAL }
+  | '!' { EXCLAMATION }
+  | '.' { PERIOD }
   | ';' { SEMICOLON }
   | '{' { OPEN_BRACE }
   | '}' { CLOSE_BRACE }
   | '(' { OPEN_PAREN }
   | ')' { CLOSE_PAREN }
   | ',' { COMMA }
-  | "/*" { OPEN_MULTI_COMMENT }
-  | "//" { SINGLE_COMMENT }
+  | "/*" { multi_line_comment_lex lexbuf }
+  | "//" { single_line_comment_lex lexbuf }
+  | whitespace { prog_lex lexbuf }
   | eof { EOF }
 
 and single_line_comment_lex = parse

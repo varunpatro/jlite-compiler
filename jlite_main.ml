@@ -7,4 +7,4 @@ let main () =
       Jlite_parser.input Jlite_lexer.prog_lex lexbuf
 
   with End_of_file -> exit 0
-let _ = Printexc.print main ()
+let _ = print_endline(Jlite_structs.string_of_jlite_program(main()))
