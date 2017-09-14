@@ -19,12 +19,16 @@
 %token EOF
 
 %start input
-%type <Jlite_structs.class_decl list> input
+%type <Jlite_structs.jlite_program> input
 
 %%
 
 input:
-	| class_decl_list EOF { $1 }
+	| program EOF { $1 }
+	;
+
+program:
+	| class_main class_decl_list { ($1, $2) }
 	;
 
 class_main:
