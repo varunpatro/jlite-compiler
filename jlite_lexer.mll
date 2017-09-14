@@ -37,10 +37,18 @@ rule prog_lex = parse
   | "new" { NEW }
   | "this" { THIS }
   | "null" { NULL }
-  | boolean as b { BOOLEAN(bool_of_string b) }
-  | integer as i { INTEGER(int_of_string i) }
-  | string as str { STRING(str) }
-  | identifier as id { IDENTIFIER(Jlite_structs.SimpleVarId id) }
+  | "Void" { VOID(Jlite_structs.VoidT) }
+  | "Int" { INTEGER(Jlite_structs.IntT) }
+  | "Bool" { BOOLEAN(Jlite_structs.BoolT) }
+  | "String" { STRING(Jlite_structs.StringT) }
+  | boolean as b { BOOLEAN_LIT(bool_of_string b) }
+  | integer as i { INTEGER_LIT(int_of_string i) }
+  | string as str { STRING_LIT(str) }
+  | identifier as id {
+    match id with
+        "main" -> MAIN_IDENTIFIER(Jlite_structs.SimpleVarId "main")
+      | x -> IDENTIFIER(Jlite_structs.SimpleVarId x)
+  }
   | classname as cname { CLASS_NAME(cname) }
   | unary_op as u { OP(Jlite_structs.UnaryOp (String.make 1 u)) }
   | boolean_op as b { OP(Jlite_structs.BooleanOp b) }
@@ -55,7 +63,7 @@ rule prog_lex = parse
   | ',' { COMMA }
   | "/*" { OPEN_MULTI_COMMENT }
   | "//" { SINGLE_COMMENT }
-  | eof { exit 0 }
+  | eof { EOF }
 
 and single_line_comment_lex = parse
   | newline { prog_lex lexbuf }
