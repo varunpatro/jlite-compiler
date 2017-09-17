@@ -17,7 +17,7 @@ let classname = uppercase (lowercase | uppercase | underscore | digit)*
 let integer = digit+
 let string = "\"[^\"\\\\]*(\\\\.[^\"\\\\]*)*\""
 
-let relational_op = ">(=)?" | "<(=)?" | "(!|=)?="
+let relational_op = ">=" | "<=" | "!=" | "==" | ">" | "<"
 
 rule prog_lex = parse
   | "class" { CLASS }
@@ -51,7 +51,7 @@ rule prog_lex = parse
   | '*' as a { TIMES(Jlite_structs.ArithmeticOp (String.make 1 a)) }
   | '/' as a { DIVIDE(Jlite_structs.ArithmeticOp (String.make 1 a)) }
   | '=' { EQUAL }
-  | '!' { EXCLAMATION }
+  | '!' as e { EXCLAMATION(Jlite_structs.UnaryOp (String.make 1 e)) }
   | '.' { PERIOD }
   | ';' { SEMICOLON }
   | '{' { OPEN_BRACE }
@@ -65,9 +65,9 @@ rule prog_lex = parse
   | eof { EOF }
 
 and single_line_comment_lex = parse
-  | newline { prog_lex lexbuf }
+  | newline | eof { prog_lex lexbuf }
   | _ { single_line_comment_lex lexbuf }
 
 and multi_line_comment_lex = parse
-  | "*/" { prog_lex lexbuf }
+  | "*/" | eof { prog_lex lexbuf }
   | _ { multi_line_comment_lex lexbuf }
