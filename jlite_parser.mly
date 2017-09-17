@@ -10,10 +10,10 @@
 %token <Jlite_structs.var_id> IDENTIFIER
 %token <Jlite_structs.class_name> CLASS_NAME
 %token <Jlite_structs.jlite_type> VOID INTEGER BOOLEAN STRING
-%token <Jlite_structs.jlite_op> OR_BOOLEAN_OP AND_BOOLEAN_OP RELATIONAL_OP PLUS MINUS TIMES DIVIDE
+%token <Jlite_structs.jlite_op> OR_BOOLEAN_OP AND_BOOLEAN_OP RELATIONAL_OP PLUS MINUS TIMES DIVIDE EXCLAMATION
 %token CLASS IF ELSE WHILE READLN PRINTLN RETURN NEW
 %token THIS NULL
-%token EQUAL EXCLAMATION PERIOD
+%token EQUAL PERIOD
 %token OPEN_BRACE CLOSE_BRACE OPEN_PAREN CLOSE_PAREN
 %token COMMA SEMICOLON
 %token EOF
@@ -141,7 +141,7 @@ rexp:
 	;
 
 bgrd:
-	| EXCLAMATION bgrd { $2 }
+	| EXCLAMATION bgrd { Jlite_structs.UnaryExp($1, $2) }
 	| BOOLEAN_LIT { Jlite_structs.BoolLiteral $1 }
 	| atom { $1 }
 	;
