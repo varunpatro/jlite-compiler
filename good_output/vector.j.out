@@ -1,0 +1,67 @@
+
+======= JLite Program =======
+
+class Main123{
+  void main(){
+    Return null;
+  }
+
+} 
+
+class Vector{
+  Int x;
+  Int y;
+
+  void addVector(Vector that){
+    this.x=[this.x,that.x](+);
+    this.y=[this.y,that.y](+);
+  }
+
+
+  void scaleVector(Int x){
+    this.x=[this.x,x](*);
+    this.y=[this.y,x](*);
+  }
+
+
+  Int dotVector(Vector that){
+    Int result;
+    result=[result,[this.x,that.x](*)](+);
+    result=[result,[this.y,that.y](*)](+);
+    Return result;
+  }
+
+
+  Bool isEqual_v1(Vector that){
+    If([that,null](==))
+    {
+      Return false;
+    }
+    else
+    {
+      Return [[this.x,that.x](==),[this.y,that.y](==)](&&);
+    }
+  }
+
+
+  Bool isEqual_v2(Vector that){
+    If((!)[that])
+    {
+      Return false;
+    }
+    else
+    {
+      Return [[this.x,that.x](==),[this.y,that.y](==)](&&);
+    }
+  }
+
+
+  Bool isEqual_v3(Vector that){
+    Return [[(!)[that],[this.x,that.x](==)](&&),[this.y,that.y](==)](&&);
+  }
+
+}
+
+======= End of JLite Program =======
+
+

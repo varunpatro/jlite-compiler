@@ -1,0 +1,20 @@
+
+======= JLite Program =======
+
+class Main{
+  void main(){
+    x=[a,b](>);
+    x=[a,b](>=);
+    x=[a,b](<);
+    x=[a,b](<=);
+    x=[a,b](==);
+    x=[a,b](!=);
+  }
+
+} 
+
+
+
+======= End of JLite Program =======
+
+

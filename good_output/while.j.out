@@ -1,0 +1,27 @@
+
+======= JLite Program =======
+
+class Test{
+  void main(Class1 a,Class2 b,Bool x){
+    If([a,[[b,c](&&),d](&&)](||))
+    {
+      While([[[x,1](!=),[y,z](||)](&&),[x,y](||)](&&))
+      {
+        Return [myCustomClass.myCustomMethod.myCustomNestedMethod()];
+        Return x;
+      }
+      Return null;
+    }
+    else
+    {
+      Return this;
+    }
+  }
+
+} 
+
+
+
+======= End of JLite Program =======
+
+
