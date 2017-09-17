@@ -13,4 +13,4 @@ jlite_parser.ml: jlite_structs.ml jlite_parser.mly
 	ocamlyacc jlite_parser.mly
 
 clean:
-	rm *.cmi *.cmo *.mli jlite_lexer.ml jlite_parser.ml jlite_main
+	rm *.cmi *.cmo *.mli jlite_lexer.ml jlite_parser.ml jlite_parser.output jlite_main

@@ -26,3 +26,4 @@ jlite_main
 jlite_lexer.ml
 jlite_parser.ml
 jlite_parser.mli
+jlite_parser.output
